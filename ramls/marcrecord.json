@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "MARC record representation",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The system assigned unique ID of the instance record; UUID"
+    },
+    "instanceId": {
+        "type": "string",
+        "description": "A UUID corresponding with the ID of an instance record"
+    },
+    "rawSource": {
+        "type": "string",
+        "description": "The raw unparsed source metadata"
+    },
+    "parsedMarc": {
+        "type": "object",
+        "description": "The parsed MARC record",
+        "properties": {
+            "leader": {
+              "type": "string",
+              "minLength": 24,
+              "maxLength": 24
+            },
+            "fields": {
+              "type": "array",
+              "minItems": 2
+            }
+        }
+    },
+    "metadata" : {
+      "type": "object",
+      "$ref": "raml-util/schemas/metadata.schema",
+      "readonly": true
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "parsedMarc"
+  ]
+}
+

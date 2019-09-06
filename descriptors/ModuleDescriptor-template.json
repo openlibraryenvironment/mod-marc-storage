@@ -1,0 +1,48 @@
+{
+    "id" : "${artifactId}-${version}",
+    "name": "MARC Record Storage Module",
+    "provides": [
+        {
+            "id" : "marc-records-storage",
+            "version" : "0.1",
+            "handlers": [
+                {
+                    "methods": [ "GET" ],
+                    "pathPattern": "/marc-records",
+                    "permissionsRequired": []
+                },
+                {
+                    "methods": [ "POST" ],
+                    "pathPattern": "/marc-records",
+                    "permissionsRequired": []
+                },
+                {
+                    "methods": [ "GET" ],
+                    "pathPattern": "/marc-records/{id}",
+                    "permissionsRequired": []
+                },
+                {
+                    "methods": [ "DELETE" ],
+                    "pathPattern": "/marc-records/{id}",
+                    "permissionsRequired": []
+                }
+            ]
+        },
+        {
+            "id" : "_tenant",
+            "version" : "1.2",
+            "interfaceType" : "system",
+            "handlers" : [
+                {
+                    "methods": [ "POST" ],
+                    "pathPattern" : "/_/tenant"
+                },
+                {
+                    "methods": [ "DELETE" ],
+                    "pathPattern" : "/_/tenant"
+                }
+            ]
+        }
+    ],
+    "permissionSets": []
+}

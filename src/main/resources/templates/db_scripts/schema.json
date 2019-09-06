@@ -1,0 +1,19 @@
+{
+  "fullText": {
+    "defaultDictionary": "simple"
+  },
+
+  "tables": [
+    {
+        "tableName": "marc_record",
+        "withMetadata": true,
+        "withAuditing": false,
+        "index": [
+            {
+                "fieldName": "id",
+                "tOps": "ADD"
+            }
+        ]
+    }
+  ]
+}
