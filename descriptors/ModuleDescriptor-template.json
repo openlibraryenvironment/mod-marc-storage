@@ -23,6 +23,11 @@
                 },
                 {
                     "methods": [ "DELETE" ],
+                    "pathPattern": "/marc-records",
+                    "permissionsRequired": []
+                },
+                {
+                    "methods": [ "DELETE" ],
                     "pathPattern": "/marc-records/{id}",
                     "permissionsRequired": []
                 }
