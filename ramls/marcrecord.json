@@ -11,6 +11,14 @@
         "type": "string",
         "description": "A UUID corresponding with the ID of an instance record"
     },
+    "institutionId": {
+      "type": "string",
+      "description": "A UUID corresponding with the ID of the institution that provided this record"
+    },
+    "localIdentifier": {
+      "type": "string",
+      "description": "Unique identifier for the record in the source catalog"
+    },
     "rawSource": {
         "type": "string",
         "description": "The raw unparsed source metadata"
@@ -38,6 +46,9 @@
   },
   "additionalProperties": false,
   "required": [
+    "instanceId",
+    "institutionId",
+    "localIdentifier",
     "parsedMarc"
   ]
 }

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS marc_record_instanceid_institutionid_identifier_uidx  ON ${myuniversity}_${mymodule}.${table.tableName} ((jsonb ->> 'instanceId'::text), (jsonb ->> 'institutionId'::text), (jsonb ->> 'localIdentifier'::text));
