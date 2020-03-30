@@ -4,7 +4,7 @@
     "provides": [
         {
             "id" : "marc-records-storage",
-            "version" : "0.1",
+            "version" : "0.2",
             "handlers": [
                 {
                     "methods": [ "GET" ],
@@ -18,6 +18,11 @@
                 },
                 {
                     "methods": [ "GET" ],
+                    "pathPattern": "/marc-records/{id}",
+                    "permissionsRequired": []
+                },
+                {
+                    "methods": [ "PUT" ],
                     "pathPattern": "/marc-records/{id}",
                     "permissionsRequired": []
                 },
