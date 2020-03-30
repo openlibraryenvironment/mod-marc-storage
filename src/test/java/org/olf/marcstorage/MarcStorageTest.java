@@ -35,6 +35,8 @@ public class MarcStorageTest {
   static final String marcJsonString1 =
 "{" +
 "  \"instanceId\":\"478685ba-ed91-4f61-83bd-d1cfe7152753\"," +
+"  \"institutionId\":\"b4578dbc-4dd9-4ac1-9c01-8a13f65aa95e\"," +
+"  \"localIdentifier\": \"029857716\"," +
 "  \"parsedMarc\": {" +
 "      \"leader\":\"00452nam a2200169 ca4500\"," +
 "      \"fields\":[" +
@@ -79,6 +81,8 @@ public class MarcStorageTest {
   static final String marcJsonString2 =
 "{" +
 "  \"instanceId\":\"11dfac11-1caf-4470-9ad1-d533f6360bdd\"," +
+"  \"institutionId\":\"b4578dbc-4dd9-4ac1-9c01-8a13f65aa95e\"," +
+"  \"localIdentifier\": \"393893\"," +
 "  \"parsedMarc\": {" +
 "  \"leader\": \"01542ccm a2200361   4500\"," +
 "      \"fields\": [" +

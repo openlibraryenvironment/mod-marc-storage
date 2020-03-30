@@ -13,7 +13,8 @@
                 "fieldName": "id",
                 "tOps": "ADD"
             }
-        ]
+        ],
+        "customSnippetPath": "unique-index-instanceid-institutionid-identifier.sql"
     }
   ]
 }
