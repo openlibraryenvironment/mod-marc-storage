@@ -12,6 +12,14 @@
             {
                 "fieldName": "id",
                 "tOps": "ADD"
+            },
+            {
+                "fieldName": "localIdentifier",
+                "tOps": "ADD"
+            },
+            {
+                "fieldName": "instanceId",
+                "tOps": "ADD"
             }
         ],
         "customSnippetPath": "unique-index-instanceid-institutionid-identifier.sql"
