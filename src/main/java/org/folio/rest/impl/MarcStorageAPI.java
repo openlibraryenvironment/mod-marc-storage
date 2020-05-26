@@ -282,13 +282,9 @@ public class MarcStorageAPI implements MarcRecords {
       Handler<AsyncResult<Response>> asyncResultHandler, Context vertxContext) {
     try {
       String tenantId = getTenant(okapiHeaders);
-      Criteria idCrit = new Criteria()
-          .addField(ID_FIELD)
-          .setOperation("=")
-          .setVal(marcrecordId);
       PostgresClient pgClient = getPGClient(vertxContext, tenantId);
-      pgClient.update(MARC_RECORD_TABLE, entity, new Criterion(idCrit),
-          false, updateReply -> {
+      pgClient.update(MARC_RECORD_TABLE, entity, marcrecordId,
+           updateReply -> {
         if(updateReply.failed()) {
           String message = logAndSaveError(updateReply.cause());
           asyncResultHandler.handle(Future.succeededFuture(

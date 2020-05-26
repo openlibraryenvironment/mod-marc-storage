@@ -1,5 +1,6 @@
 ## 0.0.4 in progress
 
+* Fixes slowness in PUT of MARC records
 
 ## 0.0.3 2020-05-26
 
