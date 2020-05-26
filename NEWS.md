@@ -1,3 +1,6 @@
+## 0.0.4 in progress
+
+
 ## 0.0.3 2020-05-26
 
 * Provides `marc-records` interface 0.3
