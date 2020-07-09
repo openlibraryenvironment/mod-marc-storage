@@ -3,6 +3,7 @@ package org.olf.marcstorage;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
@@ -31,7 +32,8 @@ public class MarcStorageTest {
   static int port;
   private static Vertx vertx;
   private final Logger logger = LoggerFactory.getLogger(MarcStorageTest.class);
-
+  public static String MODULE_TO = "0.0.5";
+  public static String MODULE_FROM = "0.0.4";
   static final String marcJsonString1 =
 "{" +
 "  \"instanceId\":\"478685ba-ed91-4f61-83bd-d1cfe7152753\"," +
@@ -564,7 +566,7 @@ public class MarcStorageTest {
   @After
   public void after(TestContext context) {
     Async async = context.async();
-    deleteAllMarcJson().setHandler(res -> {
+    deleteAllMarcJson().onComplete(res -> {
       if(res.failed()) {
         context.fail(res.cause());
       } else {
@@ -580,7 +582,7 @@ public class MarcStorageTest {
   public static void beforeClass(TestContext context) {
     Async async = context.async();
     port = NetworkUtils.nextFreePort();
-    TenantClient tenantClient = new TenantClient("localhost", port, "diku", "diku");
+    //TenantClient tenantClient = new TenantClient("localhost", port, "diku", "diku");
     vertx = Vertx.vertx();
     DeploymentOptions options = new DeploymentOptions()
         .setConfig(new JsonObject().put("http.port", port));
@@ -594,7 +596,7 @@ public class MarcStorageTest {
     }
     vertx.deployVerticle(RestVerticle.class.getName(), options, res -> {
       try {
-        tenantClient.postTenant(null, res2 -> {
+        initTenant("diku", port).onComplete(initTenantRes -> {
           async.complete();
         });
       } catch(Exception e) {
@@ -690,6 +692,30 @@ public class MarcStorageTest {
     String id = firstMember.getString("id");
     return id;
   }
+  
+    private static Future<Void> initTenant(String tenantId, int port) {
+    Promise<Void> promise = Promise.promise();
+    HttpClient client = vertx.createHttpClient();
+    String url = "http://localhost:" + port + "/_/tenant";
+    JsonObject payload = new JsonObject()
+        .put("module_to", MODULE_TO)
+        .put("module_from", MODULE_FROM);
+    HttpClientRequest request = client.postAbs(url);
+    request.handler(req -> {
+      if(req.statusCode() != 201) {
+        promise.fail("Expected 201, got " + req.statusCode());
+      } else {
+        promise.complete();
+      }
+    });
+    request.putHeader("X-Okapi-Tenant", tenantId);
+    //request.putHeader("X-Okapi-Url", okapiUrl);
+    request.putHeader("Content-Type", "application/json");
+    request.putHeader("Accept", "application/json, text/plain");
+    request.end(payload.encode());
+    return promise.future();
+  }
+
 }
 
 
