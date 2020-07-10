@@ -3,10 +3,13 @@ package org.olf.marcstorage;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
+import io.vertx.core.MultiMap;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -31,7 +34,11 @@ public class MarcStorageTest {
   static int port;
   private static Vertx vertx;
   private final Logger logger = LoggerFactory.getLogger(MarcStorageTest.class);
-
+  public static String MODULE_TO = "0.0.5";
+  public static String MODULE_FROM = "0.0.4";
+  public static String INSTANCE_1_ID = "478685ba-ed91-4f61-83bd-d1cfe7152753";
+  public static String INSTANCE_2_ID = "11dfac11-1caf-4470-9ad1-d533f6360bdd";
+  public static MultiMap standardHeaders = MultiMap.caseInsensitiveMultiMap();
   static final String marcJsonString1 =
 "{" +
 "  \"instanceId\":\"478685ba-ed91-4f61-83bd-d1cfe7152753\"," +
@@ -538,33 +545,12 @@ public class MarcStorageTest {
         async.complete();
       }
     });
-       /*
-           .setHandler(res -> {
-             JsonObject json = res.result();
-             if(json.getInteger("totalResults") < 1) {
-               context.fail("Expected non-zero result count");
-             } else {
-              marcRecord1Id = json.getJsonArray("marcrecords").getJsonObject(0).getString("id");
-              async.complete();
-             }
-           });
-       */
-       /*
-           .compose(json -> postMarcJson(marcJson2)
-           .setHandler(res -> {
-             JsonObject json2 = res.result();
-             marcRecord2Id = json2.getJsonArray("marcrecords").getJsonObject(0).getString("id");
-             async.complete();
-           })
-       );
-*/
-
   }
 
   @After
   public void after(TestContext context) {
     Async async = context.async();
-    deleteAllMarcJson().setHandler(res -> {
+    deleteAllMarcJson().onComplete(res -> {
       if(res.failed()) {
         context.fail(res.cause());
       } else {
@@ -580,7 +566,7 @@ public class MarcStorageTest {
   public static void beforeClass(TestContext context) {
     Async async = context.async();
     port = NetworkUtils.nextFreePort();
-    TenantClient tenantClient = new TenantClient("localhost", port, "diku", "diku");
+    //TenantClient tenantClient = new TenantClient("localhost", port, "diku", "diku");
     vertx = Vertx.vertx();
     DeploymentOptions options = new DeploymentOptions()
         .setConfig(new JsonObject().put("http.port", port));
@@ -594,7 +580,7 @@ public class MarcStorageTest {
     }
     vertx.deployVerticle(RestVerticle.class.getName(), options, res -> {
       try {
-        tenantClient.postTenant(null, res2 -> {
+        initTenant("diku", port).onComplete(initTenantRes -> {
           async.complete();
         });
       } catch(Exception e) {
@@ -617,6 +603,27 @@ public class MarcStorageTest {
   public void dummyTest(TestContext context) {
     Async async = context.async();
     async.complete();
+  }
+  
+  @Test
+  public void getRecordsByInstanceTest(TestContext context) {
+    Async async = context.async();
+    String url = String.format("http://localhost:%s/marc-records?query=instanceId=%s", port, INSTANCE_1_ID);
+    TestUtil.doRequest(vertx, url, HttpMethod.GET, null, null, 200,
+        "Get source record for instance 1" ).onComplete(res -> {
+      if(res.failed()) {
+        context.fail(res.cause());
+      } else {
+        try {
+          JsonObject resultJson = res.result().getJson();
+          JsonObject firstResult = resultJson.getJsonArray("marcrecords").getJsonObject(0);
+          context.assertEquals("b4578dbc-4dd9-4ac1-9c01-8a13f65aa95e", firstResult.getString("institutionId"));
+          async.complete();
+        } catch(Exception e) {
+          context.fail(e);
+        }        
+      }
+    });    
   }
 
   private Future<JsonObject> postMarcJson(JsonObject marcJson) {
@@ -690,6 +697,30 @@ public class MarcStorageTest {
     String id = firstMember.getString("id");
     return id;
   }
+  
+    private static Future<Void> initTenant(String tenantId, int port) {
+    Promise<Void> promise = Promise.promise();
+    HttpClient client = vertx.createHttpClient();
+    String url = "http://localhost:" + port + "/_/tenant";
+    JsonObject payload = new JsonObject()
+        .put("module_to", MODULE_TO)
+        .put("module_from", MODULE_FROM);
+    HttpClientRequest request = client.postAbs(url);
+    request.handler(req -> {
+      if(req.statusCode() != 201) {
+        promise.fail("Expected 201, got " + req.statusCode());
+      } else {
+        promise.complete();
+      }
+    });
+    request.putHeader("X-Okapi-Tenant", tenantId);
+    //request.putHeader("X-Okapi-Url", okapiUrl);
+    request.putHeader("Content-Type", "application/json");
+    request.putHeader("Accept", "application/json, text/plain");
+    request.end(payload.encode());
+    return promise.future();
+  }
+
 }
 
 

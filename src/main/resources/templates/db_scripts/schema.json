@@ -1,8 +1,5 @@
 {
-  "fullText": {
-    "defaultDictionary": "simple"
-  },
-
+ 
   "tables": [
     {
         "tableName": "marc_record",

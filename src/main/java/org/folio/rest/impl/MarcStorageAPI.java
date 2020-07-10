@@ -181,7 +181,7 @@ public class MarcStorageAPI implements MarcRecords {
           tenantId, "mod_marc_storage", MARC_RECORD_TABLE);
       logger.info(String.format("Deleting all MARC records with query %s",
           DELETE_ALL_QUERY));
-      pgClient.mutate(DELETE_ALL_QUERY, mutateReply -> {
+      pgClient.execute(DELETE_ALL_QUERY, mutateReply -> {
         if(mutateReply.failed()) {
           String message = logAndSaveError(mutateReply.cause());
           asyncResultHandler.handle(Future.succeededFuture(
@@ -258,7 +258,7 @@ public class MarcStorageAPI implements MarcRecords {
                DeleteMarcRecordsByMarcrecordIdResponse.respond500WithTextPlain(
                getErrorResponse(message))));
          } else {
-           if(deleteReply.result().getUpdated() == 0) {
+           if(deleteReply.result().rowCount() == 0) {
              asyncResultHandler.handle(Future.succeededFuture(
                DeleteMarcRecordsByMarcrecordIdResponse
                .respond404WithTextPlain("Not found")));
@@ -290,7 +290,7 @@ public class MarcStorageAPI implements MarcRecords {
           asyncResultHandler.handle(Future.succeededFuture(
              PutMarcRecordsByMarcrecordIdResponse
              .respond500WithTextPlain(getErrorResponse(message))));
-        } else if(updateReply.result().getUpdated() == 0) {
+        } else if(updateReply.result().rowCount() == 0) {
           asyncResultHandler.handle(Future.succeededFuture(
              PutMarcRecordsByMarcrecordIdResponse
              .respond404WithTextPlain("Not found")));
