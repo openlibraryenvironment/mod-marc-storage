@@ -1,4 +1,8 @@
-## 0.0.4 in progress
+## 0.0.5-SNAPSHOT
+
+* Adds database index on `institutionId`
+
+## 0.0.4
 
 * Fixes slowness in PUT of MARC records
 

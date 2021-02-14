@@ -17,7 +17,12 @@
             {
                 "fieldName": "instanceId",
                 "tOps": "ADD"
+            },
+            {
+                "fieldName": "institutionId",
+                "tOps": "ADD"
             }
+
         ],
         "customSnippetPath": "unique-index-instanceid-institutionid-identifier.sql"
     }
